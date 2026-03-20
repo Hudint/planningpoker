@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET=change-me-to-a-secure-random-string-in-production
+      - PORT=3000
+    restart: unless-stopped

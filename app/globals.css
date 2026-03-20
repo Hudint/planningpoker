@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0d1220;
+  --foreground: #e2e8f0;
 }
 
 @theme inline {
@@ -10,13 +10,23 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Dark navy palette – near-black with blue tint */
+  --color-navy-950: #060810;   /* page background – almost black */
+  --color-navy-900: #0e1628;   /* card / panel background */
+  --color-navy-800: #151f3a;   /* inputs, secondary bg */
+  --color-navy-700: #1e2b4e;   /* borders, hover bg */
+  --color-navy-600: #273662;   /* lighter borders */
+  --color-navy-500: #4a5e8a;   /* muted / disabled text */
+  --color-navy-400: #7088b8;   /* secondary text */
+  --color-navy-300: #96aacf;   /* light text */
+  --color-navy-200: #b8c6e0;   /* very light text */
+
+  /* Brand orange */
+  --color-brand-600: #cc5200;
+  --color-brand-500: #ff6600;
+  --color-brand-400: #ff8533;
+  --color-brand-300: #ffab70;
 }
 
 body {

@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🃏 Planning Poker
 
-## Getting Started
+Lightweight real-time planning poker for distributed teams. No login, no story management — just join a room and estimate.
 
-First, run the development server:
+## Features
+
+- **Rooms via UUID** – create a room, share the link, others join by entering their name
+- **Real-time voting** via WebSockets (Socket.IO)
+- **Stateless** – identity via JWT, no database, no persistence
+- **Card sets** – Fibonacci, T-Shirt, Powers of 2, Free Input (changeable anytime)
+- **Moderator controls** – reveal, reset, topic, timer, card set, role transfer
+- **Settings** (mod only):
+  - Allow custom input alongside preset deck
+  - Auto-reveal when all voters have voted
+  - Allow/lock vote changes after submitting
+
+## Quick Start (Docker)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker compose up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App is available at [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local Development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Requires Node.js 20+. Uses `.env.local` for `JWT_SECRET` (auto-created on first run, or set manually).
 
-To learn more about Next.js, take a look at the following resources:
+## Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Variable     | Default              | Description                                        |
+| ------------ | -------------------- | -------------------------------------------------- |
+| `JWT_SECRET` | `dev-local-secret-…` | Secret for signing JWTs — **change in production** |
+| `PORT`       | `3000`               | HTTP port                                          |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture
 
-## Deploy on Vercel
+```
+Browser  ──WebSocket──▶  server.ts (Socket.IO + Next.js)
+                              │
+                         lib/roomStore.ts  (in-memory Map)
+                         lib/jwt.ts        (sign / verify)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Server**: single `tsx server.ts` process — Next.js + Socket.IO on the same port
+- **State**: in-memory only; rooms auto-recreate from JWT on server restart
+- **Auth**: JWT stored in `localStorage` per room (`pp_token_<roomId>`), 24h TTL
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech Stack
+
+Next.js 16 · TypeScript · Tailwind CSS v4 · Socket.IO · Zustand · JWT · Docker
