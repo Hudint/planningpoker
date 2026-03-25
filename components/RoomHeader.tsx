@@ -1,11 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { CARD_SET_LABELS, type CardSetType, type RoomPhase } from '@/types';
+import { CARD_SET_LABELS, type CardSetType, type Role, type RoomPhase } from '@/types';
 
 interface Props {
   roomId: string;
   connected: boolean;
   isMod: boolean;
+  myRole: Role;
   cardSet: CardSetType;
   allowCustom: boolean;
   autoReveal: boolean;
@@ -20,18 +21,27 @@ interface Props {
   onTimerStart: (seconds: number) => void;
   onTopicChange: (topic: string) => void;
   onStartVoting: () => void;
+  onChangeRole: () => void;
 }
 
 const TIMER_OPTIONS = [30, 60, 90, 120];
 
+const ROLE_LABELS: Record<Role, string> = {
+  moderator: '⚡ Mod',
+  voter: '🗳 Voter',
+  observer: '👁 Observer',
+};
+
 export function RoomHeader({
-  roomId, connected, isMod, cardSet, allowCustom, autoReveal, allowVoteChange, topic, timerRemaining,
+  roomId, connected, isMod, myRole, cardSet, allowCustom, autoReveal, allowVoteChange, topic, timerRemaining,
   phase, onCardSetChange, onAllowCustomChange, onAutoRevealChange, onAllowVoteChangeChange, onTimerStart, onTopicChange,
+  onChangeRole,
 }: Props) {
   const [showSettings, setShowSettings] = useState(false);
   const [copied, setCopied] = useState(false);
   const [editingTopic, setEditingTopic] = useState(false);
   const [topicDraft, setTopicDraft] = useState('');
+  const [confirmRoleChange, setConfirmRoleChange] = useState(false);
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -69,6 +79,33 @@ export function RoomHeader({
           }`}>
             ⏱ {formatTimer(timerRemaining)}
           </div>
+        )}
+
+        {/* Role badge + change role */}
+        {confirmRoleChange ? (
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <span className="text-xs text-navy-400">Change role?</span>
+            <button
+              onClick={() => { setConfirmRoleChange(false); onChangeRole(); }}
+              className="text-xs px-2 py-1 bg-brand-500 hover:bg-brand-400 text-white rounded-lg transition-colors cursor-pointer"
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => setConfirmRoleChange(false)}
+              className="text-xs px-2 py-1 bg-navy-700 hover:bg-navy-600 text-navy-300 rounded-lg transition-colors cursor-pointer"
+            >
+              No
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirmRoleChange(true)}
+            className="text-xs px-2 py-1 text-navy-400 hover:text-white hover:bg-navy-800 rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+            title="Change role"
+          >
+            {ROLE_LABELS[myRole]}
+          </button>
         )}
 
         <div

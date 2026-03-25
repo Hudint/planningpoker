@@ -13,9 +13,10 @@ interface Props {
   roomId: string;
   token: string;
   onTokenUpdate: (token: string) => void;
+  onLeave: () => void;
 }
 
-export function PokerRoom({ roomId, token, onTokenUpdate }: Props) {
+export function PokerRoom({ roomId, token, onTokenUpdate, onLeave }: Props) {
   const me = decodeToken(token);
   const { setRoom, patchRoom, upsertParticipant, setMe, updateMyRole,
     setConnected, setTimerRemaining } = useRoomStore();
@@ -92,7 +93,9 @@ export function PokerRoom({ roomId, token, onTokenUpdate }: Props) {
 
   const myParticipant = room.participants.find(p => p.id === me.participantId);
   const isMod = myParticipant?.role === 'moderator';
-  const isObserver = myParticipant?.role === 'observer';
+  // Treat as observer when participant entry is not yet in the room state (defensive)
+  const isObserver = myParticipant ? myParticipant.role === 'observer' : true;
+  const myRole = myParticipant?.role ?? 'observer';
   const socket = getSocket();
 
   return (
@@ -101,6 +104,7 @@ export function PokerRoom({ roomId, token, onTokenUpdate }: Props) {
         roomId={roomId}
         connected={connected}
         isMod={isMod}
+        myRole={myRole}
         cardSet={room.cardSet}
         allowCustom={room.allowCustom}
         autoReveal={room.autoReveal}
@@ -115,6 +119,7 @@ export function PokerRoom({ roomId, token, onTokenUpdate }: Props) {
         onTimerStart={(d) => socket.emit('timer:start', d)}
         onTopicChange={(t) => socket.emit('topic:set', t)}
         onStartVoting={() => socket.emit('vote:reset')}
+        onChangeRole={onLeave}
       />
 
       <main className="flex-1 flex flex-col p-4 gap-4 max-w-4xl mx-auto w-full">

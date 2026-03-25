@@ -1,6 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Role } from '@/types';
+
+const NAME_KEY = 'pp_name';
 
 interface Props {
   roomId: string;
@@ -12,6 +14,12 @@ export function NameModal({ roomId, onJoined }: Props) {
   const [role, setRole] = useState<Extract<Role, 'voter' | 'observer'>>('voter');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Prefill name from localStorage if a name was saved previously
+  useEffect(() => {
+    const stored = localStorage.getItem(NAME_KEY);
+    if (stored) setName(stored);
+  }, []);
 
   const join = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +38,8 @@ export function NameModal({ roomId, onJoined }: Props) {
         return;
       }
       const { token } = await res.json();
+      // Persist name for future joins / role changes
+      localStorage.setItem(NAME_KEY, name.trim());
       onJoined(token);
     } catch {
       setError('Network error. Please try again.');
