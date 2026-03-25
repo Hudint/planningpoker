@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Dark navy rounded background (matches app navy-900) -->
+  <rect width="32" height="32" rx="6" fill="#0e1628"/>
+
+  <!-- White playing card -->
+  <rect x="5" y="3" width="22" height="26" rx="3" fill="#ffffff"/>
+
+  <!--
+    Spade symbol centred on the card.
+    Two bezier arcs form the left and right lobes meeting at a downward tip,
+    plus a short stem rectangle at the bottom.
+  -->
+  <path
+    d="
+      M 16 7
+      C 22 7, 24 12, 24 15
+      C 24 18, 21 19.5, 17.5 17.5
+      C 19 20, 20 22, 20 25
+      L 12 25
+      C 12 22, 13 20, 14.5 17.5
+      C 11 19.5, 8 18, 8 15
+      C 8 12, 10 7, 16 7
+      Z
+    "
+    fill="#0e1628"
+  />
+</svg>
