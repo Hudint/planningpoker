@@ -7,10 +7,14 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Planning Poker",
-  description: "Estimate stories together, in real-time.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const noindex = process.env.NOINDEX === "true";
+  return {
+    title: "Planning Poker",
+    description: "Estimate stories together, in real-time.",
+    ...(noindex && { robots: { index: false, follow: false } }),
+  };
+}
 
 export default function RootLayout({
   children,
