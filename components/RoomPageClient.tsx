@@ -29,6 +29,11 @@ export function RoomPageClient({ roomId }: { roomId: string }) {
     setToken(newToken);
   }, [roomId]);
 
+  const handleLeave = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY(roomId));
+    setToken(null);
+  }, [roomId]);
+
   if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -46,6 +51,7 @@ export function RoomPageClient({ roomId }: { roomId: string }) {
       roomId={roomId}
       token={token}
       onTokenUpdate={handleTokenUpdate}
+      onLeave={handleLeave}
     />
   );
 }
